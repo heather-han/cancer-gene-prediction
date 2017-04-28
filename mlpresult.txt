@@ -1,0 +1,52 @@
+TODO: paste this into google doc
+Distinct Partition without Feature Selection:
+Accuracy without Cross Validation: 
+relu activation accuracy:  0.758793969849
+logistic activation accuracy:  0.758793969849
+
+Accuracy without Cross Validation for testing files: 
+relu activation accuracy:  0.758620689655
+logistic activation accuracy:  0.758620689655
+
+Accuracy with 10-fold Cross Validation: 
+relu activation accuracy:  0.609085213033
+logistic activation accuracy:  0.759085213033
+
+Conventional Partition without Feature Selection:
+Accuracy without Cross Validation: 
+relu activation accuracy:  0.79
+logistic activation accuracy:  0.79
+
+Accuracy without Cross Validation for testing files: 
+relu activation accuracy:  0.686046511628
+logistic activation accuracy:  0.686046511628
+
+Accuracy with 10-fold Cross Validation: 
+relu activation accuracy:  0.730275689223
+logistic activation accuracy:  0.790275689223
+
+Distinct Partition with Feature Selection:
+Accuracy without Cross Validation: 
+relu activation accuracy:  0.758793969849
+logistic activation accuracy:  0.758793969849
+
+Accuracy without Cross Validation for testing files: 
+relu activation accuracy:  0.758620689655
+logistic activation accuracy:  0.758620689655
+
+Accuracy with 10-fold Cross Validation: 
+relu activation accuracy:  0.737769423559
+logistic activation accuracy:  0.759085213033
+
+Conventional Partition with Feature Selection:
+Accuracy without Cross Validation: 
+relu activation accuracy:  0.79
+logistic activation accuracy:  0.79
+
+Accuracy without Cross Validation for testing files: 
+relu activation accuracy:  0.674418604651
+logistic activation accuracy:  0.686046511628
+
+Accuracy with 10-fold Cross Validation: 
+relu activation accuracy:  0.799799498747
+logistic activation accuracy:  0.790275689223
