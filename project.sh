@@ -30,5 +30,7 @@ if [[ -d distinct && -d conventional ]]; then
 fi
 
 
-python svm.py distinct/train_x.txt distinct/test_x.txt distinct/train_y.txt distinct/test_y.txt conventional/train_x.txt conventional/test_x.txt conventional/train_y.txt conventional/test_y.txt 
+#python svm.py distinct/train_x.txt distinct/test_x.txt distinct/train_y.txt distinct/test_y.txt conventional/train_x.txt conventional/test_x.txt conventional/train_y.txt conventional/test_y.txt 
+
+python mlpClassifier.py distinct/train_x.txt distinct/test_x.txt distinct/train_y.txt distinct/test_y.txt conventional/train_x.txt conventional/test_x.txt conventional/train_y.txt conventional/test_y.txt 
 
