@@ -1,8 +1,7 @@
 # Heather Han (hhan16)
 # Jiayao Wu (jwu86)
-# 26 April 2017
+# 29 April 2017
 
-# usage: python 
 # python version: 2.7
 
 import sys
@@ -13,6 +12,7 @@ from sklearn.feature_selection import SelectFromModel
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_val_predict
 import matplotlib.pyplot as plt
+from collections import OrderedDict
 
 
 def main():
@@ -28,51 +28,50 @@ def main():
 	
 	results = {}
 
-	print "Distinct Partition without Feature Selection:"
+	print "********************* WITHOUT FEATURE SELECTION **********************"
+	print "\n********** Distinct Partition without Feature Selection: **********"
 	result = SVM(distinct_train_x, distinct_test_x, distinct_train_y, distinct_test_y)
 	results["distinct"] = result
 
-	print "\nConventional Partition without Feature Selection:"
+	print "\n********** Conventional Partition without Feature Selection: **********"
 	result = SVM(conv_train_x, conv_test_x, conv_train_y, conv_test_y)
 	results["conventional"] = result
 
 	''' Feature Selection '''
-	print "\nDistinct Partition with Feature Selection:"
+	print "\n********************* WITH FEATURE SELECTION **********************"
+	print "\n*********** Distinct Partition with Feature Selection: **********"
 	distinct_train_new, distinct_test_new = selectFeatures(distinct_train_x,distinct_test_x,distinct_train_y,distinct_test_y)
 	result = SVM(distinct_train_new, distinct_test_new, distinct_train_y, distinct_test_y)
 	results["distinctF"] = result
 
-	print "\nConventional Partition with Feature Selection:"
+	print "\n********** Conventional Partition with Feature Selection: ***********"
 	conv_train_new, conv_test_new = selectFeatures(conv_train_x,conv_test_x,conv_train_y,conv_test_y)
 	result = SVM(conv_train_new, conv_test_new, conv_train_y, conv_test_y)
 	results["conventionalF"] = result
 
-	
+
 	for i in results:
 		count = 1
 		for j in results[i]:
 			if i == 'distinct':
-				color = 'b'
-				label = "Distinct"
+				plt.scatter(count, j, c = 'g', marker='*', alpha=0.7, s=60, label='Distinct')
 			if i == 'conventional':
-				color = 'y'
-				label = "Conventional"
+				plt.scatter(count, j, c = 'navy', marker='^', alpha=0.7, s=60, label='Conventional')
 			if i == 'distinctF':
-				color = 'r'
-				label = "Feature Select -- Distinct"
+				plt.scatter(count, j, c = 'r', marker='p', alpha=0.7, s=60, label="Feature Select -- Distinct")
 			if i == 'conventionalF':
-				color = 'purple'
-				label = "Feature Select -- Conventional"
-			plt.scatter(count, j, c = color, label=label)
+				plt.scatter(count, j, c = 'purple', marker='o', alpha=0.7, s=60, label="Feature Select -- Conventional")
 			count += 1
-	# colors = ['navy', 'darkorange', 'red', 'yellow']
-	# labels = ["Distinct","Conventional","Feature Select -- Distinct","Feature Select -- Conventional"]
 
-	# for result in results:
-	# 	for i, color, labels in zip([1,2,3,4,5], colors, labels):
-	# 		plt.scatter(i,result[disease == i, 1],color=color,label=labels)
+	handles, labels = plt.gca().get_legend_handles_labels()
+	by_label = OrderedDict(zip(labels, handles))
+	plt.legend(by_label.values(), by_label.keys())
 
-	plt.legend(loc='best', scatterpoints=1)
+	xticks = ['linear','gaussian','pol3','pol4','pol6']
+	plt.xticks([1,2,3,4,5],xticks)
+	plt.title("SVM Classification Accuracy")
+	plt.ylabel("Accuracy")
+	plt.xlabel("Method")
 	plt.show()
 
 

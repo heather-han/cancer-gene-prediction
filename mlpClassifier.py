@@ -1,8 +1,7 @@
 # Heather Han (hhan16)
 # Jiayao Wu (jwu86)
-# 27 April 2017
+# 29 April 2017
 
-# usage: python 
 # python version: 2.7
 
 import sys
@@ -13,6 +12,7 @@ from sklearn.feature_selection import SelectFromModel
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_val_predict
 import matplotlib.pyplot as plt
+from collections import OrderedDict
 
 def main():
 	''' Read data file '''
@@ -48,35 +48,30 @@ def main():
 	result = mlp(conv_train_new, conv_test_new, conv_train_y, conv_test_y)
 	results["conventionalF"] = result
 
-	
-	# for i in results:
-	# 	count = 1
-	# 	for j in results[i]:
-	# 		if i == 'distinct':
-	# 			color = 'b'
-	# 			label = "Distinct"
-	# 		if i == 'conventional':
-	# 			color = 'y'
-	# 			label = "Conventional"
-	# 		if i == 'distinctF':
-	# 			color = 'r'
-	# 			label = "Feature Select -- Distinct"
-	# 		if i == 'conventionalF':
-	# 			color = 'purple'
-	# 			label = "Feature Select -- Conventional"
-	# 		plt.scatter(count, j, c = color, label=label)
-	# 		count += 1
+	''' plot the results '''
+	for i in results:
+		count = 1
+		for j in results[i]:
+			if i == 'distinct':
+				plt.scatter(count, j, c = 'navy', marker='*', alpha=0.5, s=60, label='Distinct')
+			if i == 'conventional':
+				plt.scatter(count, j, c = 'g', marker='^', alpha=0.5, s=60, label='Conventional')
+			if i == 'distinctF':
+				plt.scatter(count, j, c = 'r', marker='p', alpha=0.5, s=60, label="Feature Select -- Distinct")
+			if i == 'conventionalF':
+				plt.scatter(count, j, c = 'purple', marker='o', alpha=0.5, s=60, label="Feature Select -- Conventional")
+			count += 1
 
+	handles, labels = plt.gca().get_legend_handles_labels()
+	by_label = OrderedDict(zip(labels, handles))
+	plt.legend(by_label.values(), by_label.keys())
 
-	# colors = ['navy', 'darkorange', 'red', 'yellow']
-	# labels = ["Distinct","Conventional","Feature Select -- Distinct","Feature Select -- Conventional"]
-
-	# for result in results:
-	# 	for i, color, labels in zip([1,2,3,4,5], colors, labels):
-	# 		plt.scatter(i,result[disease == i, 1],color=color,label=labels)
-
-	# plt.legend(loc='best', scatterpoints=1)
-	# plt.show()
+	xticks = ['RELU', 'logistic']
+	plt.xticks([1,2],xticks)
+	plt.title("MLP Classification Accuracy")
+	plt.ylabel("Accuracy")
+	plt.xlabel("Method")
+	plt.show()
 
 
 def selectFeatures(train_x, test_x, train_y, test_y):
@@ -90,19 +85,18 @@ def selectFeatures(train_x, test_x, train_y, test_y):
 
 def mlp(train_x, test_x, train_y, test_y):
 	''' Generate a MLP for each model '''
-	relu_clf = MLPClassifier(hidden_layer_sizes=(100,),activation='relu',max_iter=10000).fit(train_x, train_y)
+	relu_clf = MLPClassifier(hidden_layer_sizes=(100),activation='relu',max_iter=10000).fit(train_x, train_y)
 
 	relu_accuracy = relu_clf.score(train_x, train_y)
 	relu_accuracy_test = relu_clf.score(test_x, test_y)
 	relu_cv = cross_val_score(relu_clf, train_x, train_y, cv=10).mean()
 	
 	# Gaussian (RBF) kernel SVM
-	log_clf = MLPClassifier(hidden_layer_sizes=(100,),activation='logistic',max_iter=10000).fit(train_x, train_y)
+	log_clf = MLPClassifier(hidden_layer_sizes=(100),activation='logistic',max_iter=10000).fit(train_x, train_y)
 
 	log_accuracy = log_clf.score(train_x, train_y)
 	log_accuracy_test = log_clf.score(test_x, test_y)
 	log_cv = cross_val_score(log_clf, train_x, train_y, cv=10).mean()
-	
 
 
 	''' Accuracy without cross validation '''
