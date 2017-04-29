@@ -27,21 +27,23 @@ def main():
 	
 	results = {}
 
-	print "Distinct Partition without Feature Selection:"
+	print "********************* WITHOUT FEATURE SELECTION **********************"
+	print "\n********** Distinct Partition without Feature Selection: **********"
 	result = mlp(distinct_train_x, distinct_test_x, distinct_train_y, distinct_test_y)
 	results["distinct"] = result
 
-	print "\nConventional Partition without Feature Selection:"
+	print "\n********** Conventional Partition without Feature Selection: **********"
 	result = mlp(conv_train_x, conv_test_x, conv_train_y, conv_test_y)
 	results["conventional"] = result
 
 	''' Feature Selection '''
-	print "\nDistinct Partition with Feature Selection:"
+	print "\n********************* WITH FEATURE SELECTION **********************"
+	print "\n*********** Distinct Partition with Feature Selection: **********"
 	distinct_train_new, distinct_test_new = selectFeatures(distinct_train_x,distinct_test_x,distinct_train_y,distinct_test_y)
 	result = mlp(distinct_train_new, distinct_test_new, distinct_train_y, distinct_test_y)
 	results["distinctF"] = result
 
-	print "\nConventional Partition with Feature Selection:"
+	print "\n********** Conventional Partition with Feature Selection: ***********"
 	conv_train_new, conv_test_new = selectFeatures(conv_train_x,conv_test_x,conv_train_y,conv_test_y)
 	result = mlp(conv_train_new, conv_test_new, conv_train_y, conv_test_y)
 	results["conventionalF"] = result
@@ -88,14 +90,14 @@ def selectFeatures(train_x, test_x, train_y, test_y):
 
 def mlp(train_x, test_x, train_y, test_y):
 	''' Generate a MLP for each model '''
-	relu_clf = MLPClassifier(activation='relu',max_iter=10000).fit(train_x, train_y)
+	relu_clf = MLPClassifier(hidden_layer_sizes=(100,),activation='relu',max_iter=10000).fit(train_x, train_y)
 
 	relu_accuracy = relu_clf.score(train_x, train_y)
 	relu_accuracy_test = relu_clf.score(test_x, test_y)
 	relu_cv = cross_val_score(relu_clf, train_x, train_y, cv=10).mean()
 	
 	# Gaussian (RBF) kernel SVM
-	log_clf = MLPClassifier(activation='logistic',max_iter=10000).fit(train_x, train_y)
+	log_clf = MLPClassifier(hidden_layer_sizes=(100,),activation='logistic',max_iter=10000).fit(train_x, train_y)
 
 	log_accuracy = log_clf.score(train_x, train_y)
 	log_accuracy_test = log_clf.score(test_x, test_y)
