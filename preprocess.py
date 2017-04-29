@@ -10,8 +10,6 @@ import numpy as np
 from sklearn import preprocessing
 
 
-
-
 def main():
 	# Data samples in the file:
 	# 180 samples without metastasis to distant locations
@@ -31,25 +29,27 @@ def main():
 
 	# read sample and feature data
 	data = np.genfromtxt(sys.argv[1],delimiter='\t',skip_header=55,skip_footer=1)[:,1:]
-
+	# read results directory path
+	results = sys.argv[2]
 
 	''' Normalize the data '''
 	data_scaled = preprocessing.scale(data)
+	np.savetxt(results+'/data.txt', data_scaled)
 
 	# print normalized data
 	# print data_scaled
 	#np.savetxt('preprocessed_data.txt', data_scaled)
 	train_x, test_x, train_y, test_y = distinctPartion(data_scaled, met_status)
-	np.savetxt('distinct/train_x.txt', train_x)
-	np.savetxt('distinct/test_x.txt', test_x)
-	np.savetxt('distinct/train_y.txt', train_y)
-	np.savetxt('distinct/test_y.txt', test_y)
+	np.savetxt(results+'/distinct/train_x.txt', train_x)
+	np.savetxt(results + '/distinct/test_x.txt', test_x)
+	np.savetxt(results + '/distinct/train_y.txt', train_y)
+	np.savetxt(results + '/distinct/test_y.txt', test_y)
 
 	train_x, test_x, train_y, test_y = conventionalPartition(data_scaled, met_status)
-	np.savetxt('conventional/train_x.txt', train_x)
-	np.savetxt('conventional/test_x.txt', test_x)
-	np.savetxt('conventional/train_y.txt', train_y)
-	np.savetxt('conventional/test_y.txt', test_y)
+	np.savetxt(results + '/conventional/train_x.txt', train_x)
+	np.savetxt(results + '/conventional/test_x.txt', test_x)
+	np.savetxt(results + '/conventional/train_y.txt', train_y)
+	np.savetxt(results + '/conventional/test_y.txt', test_y)
 
 
 ''' Partitioning method 1 '''
