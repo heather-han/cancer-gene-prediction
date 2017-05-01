@@ -53,11 +53,11 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results):
 
 def mlp(train_x, train_y, name, results):
 	''' Generate a MLP for each model '''
-	relu_clf = MLPClassifier(hidden_layer_sizes=(100),activation='relu',max_iter=10000).fit(train_x, train_y)
+	relu_clf = MLPClassifier(hidden_layer_sizes=(100),activation='relu',random_state=1,max_iter=10000).fit(train_x, train_y)
 	pickle.dump(relu_clf, open(results+'/params/'+name+'/relu.txt', 'wb'))
 
 	# Gaussian (RBF) kernel SVM
-	log_clf = MLPClassifier(hidden_layer_sizes=(100),activation='logistic',max_iter=10000).fit(train_x, train_y)
+	log_clf = MLPClassifier(hidden_layer_sizes=(100),activation='logistic',random_state=1,max_iter=10000).fit(train_x, train_y)
 	pickle.dump(log_clf, open(results+'/params/'+name+'/log.txt', 'wb'))
 
 
