@@ -29,8 +29,14 @@ def main():
 
 	# read sample and feature data
 	data = np.genfromtxt(sys.argv[1],delimiter='\t',skip_header=55,skip_footer=1)[:,1:]
-	# read results directory path
+	genes = np.genfromtxt(sys.argv[1],dtype=str,delimiter='\t',skip_header=55,skip_footer=1)[:,0]
+	
 	results = sys.argv[2]
+	
+	'''save the genes'''
+	np.savetxt(results+'/genes.txt', genes, fmt='%s')
+
+	# read results directory path
 
 	''' Normalize the data '''
 #	data_log = np.log(data)

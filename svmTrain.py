@@ -14,6 +14,8 @@ from sklearn.model_selection import cross_val_predict
 import matplotlib.pyplot as plt
 from collections import OrderedDict
 import pickle
+from sklearn.decomposition import PCA
+
 #path saved: results/params/distinct... /conventional... etc.
 
 def main():
@@ -27,6 +29,7 @@ def main():
 	conv_train_y = np.genfromtxt(sys.argv[7],delimiter=' ')
 	conv_test_y = np.genfromtxt(sys.argv[8],delimiter=' ')
 	results = sys.argv[9]
+	# pcaFile = np.genfromtxt(sys.argv[10],delimiter=' ')
 
 	SVM(distinct_train_x, distinct_train_y, "distinct", results)
 
@@ -39,12 +42,20 @@ def main():
 	conv_train_new = selectFeatures(conv_train_x,conv_test_x,conv_train_y,conv_test_y, "feature_conventional", results)
 	SVM(conv_train_new, conv_train_y, "feature_conventional",results)
 
-
+	''' Dimentionality Reduction '''
+	# dimensionReduction(pcaFile)
 
 def selectFeatures(train_x, test_x, train_y, test_y, name, results):
 	# set the random state to 1 so that the results are consistent
 	clf = ExtraTreesClassifier(random_state=1)
 	clf = clf.fit(train_x, train_y)
+	importance = clf.feature_importances_
+	selected = []
+	for i in range(0, len(importance)):
+		if importance[i] >= 1e-5:
+			selected.append(int(i))
+	np.savetxt(results+'/params/'+name+'/selectedFeatures.txt', selected)
+
 	model = SelectFromModel(clf, prefit = True)
 	train_new = model.transform(train_x)
 	test_new = model.transform(test_x)
@@ -52,8 +63,11 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results):
 	np.savetxt(results+'/params/'+name+'/trainX.txt', train_new)
 	return train_new
 
-#def dimensionReduction(train_x, test_x):
-	
+# def dimensionReduction(train_x, test_x):
+# 	pca = PCA(n_components=10)
+# 	model = pca.fit(train_x)
+# 	train_new = fit_transform(train_x)
+# 	test_new  =fit_transform(test_x)
 
 def SVM(train_x, train_y, name, results):
 	''' Generate a SVM for each model '''
