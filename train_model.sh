@@ -28,5 +28,3 @@ python svmTrain.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_train
 # MLP
 python mlpTrain.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $results
 
-# PCA
-# python pca.py $results/data.txt

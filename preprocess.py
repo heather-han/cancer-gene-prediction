@@ -33,6 +33,7 @@ def main():
 	results = sys.argv[2]
 
 	''' Normalize the data '''
+#	data_log = np.log(data)
 	data_scaled = preprocessing.scale(data)
 	np.savetxt(results+'/data.txt', data_scaled)
 

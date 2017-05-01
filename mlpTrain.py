@@ -41,7 +41,8 @@ def main():
 
 
 def selectFeatures(train_x, test_x, train_y, test_y, name, results):
-	clf = ExtraTreesClassifier()
+	# set the random state to 1 so that the results are consistent
+	clf = ExtraTreesClassifier(random_state=1)
 	clf = clf.fit(train_x, train_y)
 	model = SelectFromModel(clf, prefit = True)
 	train_new = model.transform(train_x)

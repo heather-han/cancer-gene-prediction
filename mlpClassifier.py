@@ -50,7 +50,7 @@ def main():
 
 	''' plot the results '''
 	for i in results:
-		count = 1
+		count = 2
 		for j in results[i]:
 			if i == 'distinct':
 				plt.scatter(count, j, c = 'navy', marker='*', alpha=0.5, s=60, label='Distinct')
