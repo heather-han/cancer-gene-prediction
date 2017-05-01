@@ -58,13 +58,13 @@ def main():
 		count = 1
 		for j in results[i]:
 			if i == 'distinct':
-				plt.scatter(count, j, c = 'g', marker='*', alpha=0.7, s=60, label='Distinct')
+				plt.scatter(count, j, c = 'r', marker='*', alpha=1, s=110, label='Distinct')
 			if i == 'conventional':
-				plt.scatter(count, j, c = 'navy', marker='^', alpha=0.7, s=60, label='Conventional')
+				plt.scatter(count, j, c = 'navy', marker='^', alpha=0.7, s=70, label='Conventional')
 			if i == 'distinctF':
-				plt.scatter(count, j, c = 'r', marker='p', alpha=0.7, s=60, label="Feature Select -- Distinct")
+				plt.scatter(count, j, c = 'y', marker='p', alpha=0.7, s=70, label="Feature Select -- Distinct")
 			if i == 'conventionalF':
-				plt.scatter(count, j, c = 'purple', marker='o', alpha=0.7, s=60, label="Feature Select -- Conventional")
+				plt.scatter(count, j, c = 'purple', marker='o', alpha=0.7, s=70, label="Feature Select -- Conventional")
 			count += 1
 
 	handles, labels = plt.gca().get_legend_handles_labels()

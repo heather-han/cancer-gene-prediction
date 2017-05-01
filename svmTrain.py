@@ -50,6 +50,8 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results):
 	test_new = model.transform(test_x)
 	np.savetxt(results+'/params/'+name+'/testX.txt', test_new)
 	np.savetxt(results+'/params/'+name+'/trainX.txt', train_new)
+
+	print clf.feature_importances_
 	return train_new
 
 #def dimensionReduction(train_x, test_x):
