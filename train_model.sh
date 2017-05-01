@@ -21,10 +21,15 @@ conv_trainY=$results/conventional/train_y.txt
 conv_testX=$results/conventional/test_x.txt
 conv_testY=$results/conventional/test_y.txt
 
+genes=$results/genes.txt
+gene_index=$results/params/feature_conventional/selectedFeatures.txt
 # SVM
 
 python svmTrain.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $results
 
 # MLP
 python mlpTrain.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $results
+
+#findWhichFeaturesSelected
+python findFeatures.py $genes $gene_index $results
 
