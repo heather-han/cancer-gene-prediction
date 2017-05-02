@@ -79,6 +79,13 @@ def main():
 	plot(dist_results, "Distinct")
 	plot(conv_results, "Conventional")
 
+	''' for additional dataset '''
+	print "\n*************************** Additional Dataset **************************"
+	testNew_X = np.genfromtxt(sys.argv[18],delimiter=' ')
+	testNew_Y = np.genfromtxt(sys.argv[19],delimiter=' ')
+	result = SVM2(testNew_X, testNew_Y, resultsFolder+'/feature_conventional/' )
+
+
 
 def SVM(train_x, test_x, train_y, test_y, resultsFolder):
 	''' Generate a SVM for each model '''
@@ -113,7 +120,7 @@ def SVM(train_x, test_x, train_y, test_y, resultsFolder):
 	pol6_cv = cross_val_score(pol6_svm, train_x, train_y, cv=10).mean()
 
 	''' Accuracy of the model on training data without cross validation '''
-	print "Accuracy without Cross Validation: "
+	print "Accuracy without Cross Validation for training files: "
 	print "Linear kernel accuracy: ", lin_accuracy
 	print "Gaussian kernel accuracy: ", gau_accuracy
 	print "Polynomial accuracy with d=3,4,6: ", pol3_accuracy,pol4_accuracy,pol6_accuracy
@@ -125,13 +132,54 @@ def SVM(train_x, test_x, train_y, test_y, resultsFolder):
 	print "Polynomial accuracy with d=3,4,6: ", pol3_accuracy_test,pol4_accuracy_test,pol6_accuracy_test
 	
 	''' Accuracy with 10-fold cross validation '''
-	print "\nAccuracy with 10-fold Cross Validation: "
+	print "\nAccuracy with 10-fold Cross Validation for training files: "
 	print "Linear kernel accuracy: ", lin_cv
 	print "Gaussian kernel accuracy: ", gau_cv
 	print "Polynomial accuracy with d=3,4,6: ", pol3_cv, pol4_cv, pol6_cv
 
 	return lin_cv, gau_cv, pol3_cv, pol4_cv, pol6_cv
 
+''' for the additional dataset '''
+def SVM2(test_x, test_y, resultsFolder):
+	''' Generate a SVM for each model '''
+	# linear kernel SVM
+	lin_svm = pickle.load(open(resultsFolder+'linear.txt', 'rb'))
+	lin_accuracy_test = lin_svm.score(test_x, test_y)
+	lin_cv = cross_val_score(lin_svm, test_x, test_y, cv=10).mean()
+	
+	# Gaussian (RBF) kernel SVM
+	gau_svm = pickle.load(open(resultsFolder+'gaussian.txt', 'rb'))
+	gau_accuracy_test = gau_svm.score(test_x, test_y)
+	gau_cv = cross_val_score(gau_svm, test_x, test_y, cv=10).mean()
+
+	# Polynomial kernel SVM with d = 3
+	pol3_svm = pickle.load(open(resultsFolder+'pol3.txt', 'rb'))
+	pol3_accuracy_test = pol3_svm.score(test_x, test_y)
+	pol3_cv = cross_val_score(pol3_svm, test_x, test_y, cv=10).mean()
+
+	# Polynomial kernel SVM with d = 4
+	pol4_svm = pickle.load(open(resultsFolder+'pol4.txt', 'rb'))
+	pol4_accuracy_test = pol4_svm.score(test_x, test_y)
+	pol4_cv = cross_val_score(pol4_svm, test_x, test_y, cv=10).mean()
+
+	# Polynomial kernel SVM with d = 6
+	pol6_svm = pickle.load(open(resultsFolder+'pol6.txt', 'rb'))
+	pol6_accuracy_test = pol6_svm.score(test_x, test_y)
+	pol6_cv = cross_val_score(pol6_svm, test_x, test_y, cv=10).mean()
+
+	''' Accuracy of the model on testing data without cross validation '''
+	print "\nAccuracy without Cross Validation for testing files: "
+	print "Linear kernel accuracy: ", lin_accuracy_test
+	print "Gaussian kernel accuracy: ", gau_accuracy_test
+	print "Polynomial accuracy with d=3,4,6: ", pol3_accuracy_test,pol4_accuracy_test,pol6_accuracy_test
+	
+	''' Accuracy with 10-fold cross validation '''
+	print "\nAccuracy with 10-fold Cross Validation for testing files: "
+	print "Linear kernel accuracy: ", lin_cv
+	print "Gaussian kernel accuracy: ", gau_cv
+	print "Polynomial accuracy with d=3,4,6: ", pol3_cv, pol4_cv, pol6_cv
+
+	return lin_cv, gau_cv, pol3_cv, pol4_cv, pol6_cv
 
 def plot(results, partition):
 	''' Method to plot the accuracies of each model ''' 

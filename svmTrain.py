@@ -35,10 +35,12 @@ def main():
 	SVM(conv_train_x, conv_train_y, "conventional",results)
 
 	''' Feature Selection '''
-	distinct_train_new = selectFeatures(distinct_train_x,distinct_test_x,distinct_train_y,distinct_test_y, "feature_distinct",results)
+	test_x_add = np.genfromtxt(sys.argv[10],delimiter=' ')
+
+	distinct_train_new = selectFeatures(distinct_train_x,distinct_test_x,distinct_train_y,distinct_test_y, "feature_distinct",results, test_x_add)
 	SVM(distinct_train_new, distinct_train_y, "feature_distinct",results)
 
-	conv_train_new = selectFeatures(conv_train_x,conv_test_x,conv_train_y,conv_test_y, "feature_conventional", results)
+	conv_train_new = selectFeatures(conv_train_x,conv_test_x,conv_train_y,conv_test_y, "feature_conventional", results, test_x_add)
 	SVM(conv_train_new, conv_train_y, "feature_conventional",results)
 
 	''' Dimentionality Reduction '''
@@ -48,21 +50,23 @@ def main():
 	conv_train_new_pca = dimensionReduction(conv_train_x, conv_test_x, "pca_conventional", results)
 	SVM(conv_train_new_pca, conv_train_y, "pca_conventional",results)
 
-def selectFeatures(train_x, test_x, train_y, test_y, name, results):
+def selectFeatures(train_x, test_x, train_y, test_y, name, results, test_x_add):
 	# set the random state to 1 so that the results are consistent
 	clf = ExtraTreesClassifier(random_state=1)
 	clf = clf.fit(train_x, train_y)
 	importance = clf.feature_importances_
 	a = np.array(importance)
-	selected = np.argpartition(a,-10)[-10:]
+	selected = np.argpartition(a,-20)[-20:]
 	
 	np.savetxt(results+'/params/'+name+'/selectedFeatures.txt', selected)
 
 	model = SelectFromModel(clf, prefit = True)
 	train_new = model.transform(train_x)
 	test_new = model.transform(test_x)
+	test_new_add = model.transform(test_x_add)
 	np.savetxt(results+'/params/'+name+'/testX.txt', test_new)
 	np.savetxt(results+'/params/'+name+'/trainX.txt', train_new)
+	np.savetxt(results+'/params/'+name+'/GPL96_X.txt', test_new_add)
 
 	return train_new
 

@@ -78,6 +78,11 @@ def main():
 	plot(dist_results, "Distinct")
 	plot(conv_results, "Conventional")
 
+	''' for additional dataset '''
+	print "\n*************************** Additional Dataset **************************"
+	testNew_X = np.genfromtxt(sys.argv[18],delimiter=' ')
+	testNew_Y = np.genfromtxt(sys.argv[19],delimiter=' ')
+	result = mlp2(testNew_X, testNew_Y, resultsFolder+'/feature_conventional/')
 
 def mlp(train_x, test_x, train_y, test_y, resultsFolder):
 	''' Generate a MLP for each model '''
@@ -97,7 +102,7 @@ def mlp(train_x, test_x, train_y, test_y, resultsFolder):
 	log_cv = cross_val_score(log_clf, train_x, train_y, cv=10).mean()
 
 	''' Accuracy of the model on training data without cross validation '''
-	print "Accuracy without Cross Validation: "
+	print "Accuracy without Cross Validation for training files: "
 	print "relu activation accuracy: ", relu_accuracy
 	print "logistic activation accuracy: ", log_accuracy
 
@@ -107,12 +112,37 @@ def mlp(train_x, test_x, train_y, test_y, resultsFolder):
 	print "logistic activation accuracy: ", log_accuracy_test
 	
 	''' Accuracy with 10-fold cross validation '''
-	print "\nAccuracy with 10-fold Cross Validation: "
+	print "\nAccuracy with 10-fold Cross Validation for training files: "
 	print "relu activation accuracy: ", relu_cv
 	print "logistic activation accuracy: ", log_cv
 
 	return relu_cv, log_cv
 
+''' for additional dataset '''
+def mlp2(test_x, test_y, resultsFolder):
+	''' Generate a MLP for each model '''
+
+	''' RELU kernel '''
+	relu_clf = pickle.load(open(resultsFolder+'relu.txt', 'rb'))
+	relu_accuracy_test = relu_clf.score(test_x, test_y)
+	relu_cv = cross_val_score(relu_clf, test_x, test_y, cv=10).mean()
+	
+	''' Gaussian (RBF) kernel '''
+	log_clf = pickle.load(open(resultsFolder+'log.txt', 'rb'))
+	log_accuracy_test = log_clf.score(test_x, test_y)
+	log_cv = cross_val_score(log_clf, test_x, test_y, cv=10).mean()
+
+	''' Accuracy of the model on testing data without cross validation '''
+	print "\nAccuracy without Cross Validation for testing files: "
+	print "relu activation accuracy: ", relu_accuracy_test
+	print "logistic activation accuracy: ", log_accuracy_test
+	
+	''' Accuracy with 10-fold cross validation '''
+	print "\nAccuracy with 10-fold Cross Validation for testing files: "
+	print "relu activation accuracy: ", relu_cv
+	print "logistic activation accuracy: ", log_cv
+
+	return relu_cv, log_cv
 
 def plot(results, partition):
 	''' Method to plot the accuracies of each model ''' 

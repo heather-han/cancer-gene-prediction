@@ -83,6 +83,8 @@ def selectFeatures(train_x, test_x, train_y, test_y):
 	test_new = model.transform(test_x)
 	return train_new, test_new
 
+def dimensionReduction(train_x, test_x):
+	
 
 def SVM(train_x, test_x, train_y, test_y):
 	''' Generate a SVM for each model '''

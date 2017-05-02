@@ -25,12 +25,15 @@ conv_testY=$results/conventional/test_y.txt
 
 genes=$results/genes.txt
 gene_index=$results/params/feature_conventional/selectedFeatures.txt
+
+addX=$results/GPL96_X.txt
+
 # SVM
 
-python svmTrain.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $results
+python svmTrain.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $results $addX
 
 # MLP
-python mlpTrain.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $results
+python mlpTrain.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $results $addX
 
 #findWhichFeaturesSelected
 python findFeatures.py $genes $gene_index $results

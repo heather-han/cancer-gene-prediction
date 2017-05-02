@@ -60,13 +60,37 @@ def main():
 	np.savetxt(results + '/conventional/test_y.txt', test_y)
 
 	''' process additional datasets '''
-	# data2 = np.genfromtxt(sys.argv[3],delimiter='\t',skip_header=70,skip_footer=1)[:,1:]
-	# data_log2 = np.log(data2)
-	# data_scaled2 = preprocessing.scale(data_log2)
-	# np.savetxt(results+'/data.txt', data_scaled)
+	data2 = np.genfromtxt(sys.argv[3],delimiter='\t',skip_header=70,skip_footer=1)[:,1:]
+	plus_one2 = [i+1 for i in data2]
+	data_log2 = [np.log2(i) for i in plus_one2]
+	data_scaled2 = preprocessing.scale(data_log2, axis=1)
+	np.savetxt(results+'/GPL96_X.txt', data_scaled2.T)
 
+	metastasis2 = np.genfromtxt(sys.argv[3],dtype=str,delimiter='\t',skip_header=36,max_rows=1)[1:]
+	met_status2 = []
+	for i in metastasis2:
+		if 'Bone' in i:
+			met_status2.append(1)
+		else:
+			met_status2.append(0)
+	np.savetxt(results+'/GPL96_Y.txt', met_status2)
+
+	''' do data3 if we have more time, need to select the specific rows '''
 	# data3 = np.genfromtxt(sys.argv[4],delimiter='\t',skip_header=70,skip_footer=1)[:,1:]
+	# plus_one3 = [i+1 for i in data3]
+	# data_log3 = [np.log2(i) for i in plus_one3]
+	# data_scaled3 = preprocessing.scale(data_log3, axis=1)
+	# print ("data3 shape:",data_scaled3.T.shape)
+	# np.savetxt(results+'/GPL570_X.txt', data_scaled3.T)
 
+	# metastasis3 = np.genfromtxt(sys.argv[4],dtype=str,delimiter='\t',skip_header=36,max_rows=1)[1:]
+	# met_status3 = []
+	# for i in metastasis3:
+	# 	if 'Bone' in i:
+	# 		met_status3.append(1)
+	# 	else:
+	# 		met_status3.append(0)
+	# np.savetxt(results+'/GPL570_Y.txt', met_status3)
 
 ''' Partitioning method 1 '''
 def distinctPartion(X,Y):
