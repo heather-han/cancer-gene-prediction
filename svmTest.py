@@ -2,6 +2,9 @@
 # Jiayao Wu (jwu86)
 # 29 April 2017
 
+''' Testing file to run multi-layer perceptron (MLP) classification on the given
+    dataset using the MLP model trained in mlpTrain.py '''
+
 # python version: 2.7
 
 import sys
@@ -27,17 +30,20 @@ def main():
 	conv_train_y = np.genfromtxt(sys.argv[7],delimiter=' ')
 	conv_test_y = np.genfromtxt(sys.argv[8],delimiter=' ')
 	resultsFolder = sys.argv[9]
-	results = {}
 
+	dist_results = {}
+	conv_results = {}
+
+	''' Model alone without feature selection nor dimensionality reduction '''
 	print "**************************** SVM *****************************"
 	print "**************************** MODEL ALONE *****************************"
 	print "\n******************** Distinct Partition alone: *********************"
 	result = SVM(distinct_train_x, distinct_test_x, distinct_train_y, distinct_test_y, resultsFolder+'/distinct/')
-	results["distinct"] = result
+	dist_results["alone"] = result
 
 	print "\n****************** Conventional Partition alone: *******************"
 	result = SVM(conv_train_x, conv_test_x, conv_train_y, conv_test_y, resultsFolder+'/conventional/')
-	results["conventional"] = result
+	conv_results["alone"] = result
 
 	''' Feature Selection '''
 	print "\n********************* WITH FEATURE SELECTION **********************"
@@ -45,63 +51,34 @@ def main():
 	distinct_train_new = np.genfromtxt(sys.argv[10],delimiter=' ')
 	distinct_test_new = np.genfromtxt(sys.argv[11],delimiter=' ')
 	result = SVM(distinct_train_new, distinct_test_new, distinct_train_y, distinct_test_y, resultsFolder+'/feature_distinct/')
-	results["distinctF"] = result
+	dist_results["feature"] = result
 
 	print "\n********** Conventional Partition with Feature Selection: ***********"
 	conv_train_new = np.genfromtxt(sys.argv[12],delimiter=' ')
 	conv_test_new = np.genfromtxt(sys.argv[13],delimiter=' ')
 
 	result = SVM(conv_train_new, conv_test_new, conv_train_y, conv_test_y, resultsFolder+'/feature_conventional/')
-	results["conventionalF"] = result
+	conv_results["feature"] = result
 
-
-	''' Dimentionality Reduction '''
+	''' Dimensionality Reduction '''
 	print "\n******************* WITH DIMENSIONALITY REDUCTION ********************"
 	print "\n********** Distinct Partition with Dimensionality Reduction: *********"
 	distinct_train_new = np.genfromtxt(sys.argv[14],delimiter=' ')
 	distinct_test_new = np.genfromtxt(sys.argv[15],delimiter=' ')
 	result = SVM(distinct_train_new, distinct_test_new, distinct_train_y, distinct_test_y, resultsFolder+'/pca_distinct/')
-	results["distinctPCA"] = result
+	dist_results["PCA"] = result
 
 	print "\n********** Conventional Partition with Dimensionality Reduction: ***********"
 	conv_train_new = np.genfromtxt(sys.argv[16],delimiter=' ')
 	conv_test_new = np.genfromtxt(sys.argv[17],delimiter=' ')
 
 	result = SVM(conv_train_new, conv_test_new, conv_train_y, conv_test_y, resultsFolder+'/pca_conventional/')
-	results["conventionalPCA"] = result
+	conv_results["PCA"] = result
 
+	''' Plot the model accuracies '''
+	plot(dist_results, "Distinct")
+	plot(conv_results, "Conventional")
 
-	for i in results:
-		count = 1
-		for j in results[i]:
-			if i == 'distinct':
-				plt.scatter(count, j, c = 'r', marker='*', alpha=1, s=110, label='Distinct')
-			if i == 'conventional':
-				plt.scatter(count, j, c = 'navy', marker='^', alpha=0.7, s=70, label='Conventional')
-			if i == 'distinctF':
-				plt.scatter(count, j, c = 'y', marker='p', alpha=0.7, s=70, label="Feature Select -- Distinct")
-			if i == 'conventionalF':
-				plt.scatter(count, j, c = 'purple', marker='o', alpha=0.7, s=70, label="Feature Select -- Conventional")
-			if i == 'distinctPCA':
-				plt.scatter(count, j, c = 'pink', marker='>', alpha=0.7, s=70, label='PCA -- Distinct')
-			if i == 'conventionalPCA':
-				plt.scatter(count, j, c = 'orange', marker='s', alpha=0.7, s=70, label="PCA -- Conventional")
-			count += 1
-
-	handles, labels = plt.gca().get_legend_handles_labels()
-	by_label = OrderedDict(zip(labels, handles))
-	plt.legend(by_label.values(), by_label.keys())
-
-	xticks = ['linear','gaussian','pol3','pol4','pol6']
-	plt.xticks([1,2,3,4,5],xticks)
-	plt.title("SVM Classification Accuracy")
-	plt.ylabel("Accuracy")
-	plt.xlabel("Method")
-	plt.show()
-
-
-#def dimensionReduction(train_x, test_x):
-	
 
 def SVM(train_x, test_x, train_y, test_y, resultsFolder):
 	''' Generate a SVM for each model '''
@@ -135,12 +112,13 @@ def SVM(train_x, test_x, train_y, test_y, resultsFolder):
 	pol6_accuracy_test = pol6_svm.score(test_x, test_y)
 	pol6_cv = cross_val_score(pol6_svm, train_x, train_y, cv=10).mean()
 
-	''' Accuracy without cross validation '''
+	''' Accuracy of the model on training data without cross validation '''
 	print "Accuracy without Cross Validation: "
 	print "Linear kernel accuracy: ", lin_accuracy
 	print "Gaussian kernel accuracy: ", gau_accuracy
 	print "Polynomial accuracy with d=3,4,6: ", pol3_accuracy,pol4_accuracy,pol6_accuracy
 
+	''' Accuracy of the model on testing data without cross validation '''
 	print "\nAccuracy without Cross Validation for testing files: "
 	print "Linear kernel accuracy: ", lin_accuracy_test
 	print "Gaussian kernel accuracy: ", gau_accuracy_test
@@ -153,6 +131,34 @@ def SVM(train_x, test_x, train_y, test_y, resultsFolder):
 	print "Polynomial accuracy with d=3,4,6: ", pol3_cv, pol4_cv, pol6_cv
 
 	return lin_cv, gau_cv, pol3_cv, pol4_cv, pol6_cv
+
+
+def plot(results, partition):
+	''' Method to plot the accuracies of each model ''' 
+
+	# plot the accuracy of every model
+	for i in results:
+		count = 1
+		for j in results[i]:
+			if i == 'alone':
+				plt.scatter(count, j, c = 'darkorange', marker='o', alpha=0.7, s=110, label='Model Alone')
+			if i == 'feature':
+				plt.scatter(count, j, c = 'navy', marker='^', alpha=0.7, s=70, label='Feature Selection')
+			if i == 'PCA':
+				plt.scatter(count, j, c = 'pink', marker='p', alpha=1, s=110, label="Feature Extraction")
+			count += 1
+
+	# get the handles nad labels to eliminate duplicate labels in the legend
+	handles, labels = plt.gca().get_legend_handles_labels()
+	by_label = OrderedDict(zip(labels, handles))
+	plt.legend(by_label.values(), by_label.keys())
+
+	xticks = ['linear','gaussian','pol3','pol4','pol6']
+	plt.xticks([1,2,3,4,5],xticks)
+	plt.title("SVM Classification Accuracy with " + partition + " Partitioning")
+	plt.ylabel("Accuracy")
+	plt.xlabel("SVM Method")
+	plt.show()
 
 
 if __name__ == '__main__':

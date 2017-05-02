@@ -2,6 +2,9 @@
 # Jiayao Wu (jwu86)
 # 29 April 2017
 
+''' Testing file to run multi-layer perceptron (MLP) classification on the given
+    dataset using the MLP model trained in mlpTrain.py '''
+
 # python version: 2.7
 
 import sys
@@ -15,6 +18,7 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 import pickle
 
+
 def main():
 	''' Read data file '''
 	distinct_train_x = np.genfromtxt(sys.argv[1],delimiter=' ')
@@ -26,18 +30,20 @@ def main():
 	conv_train_y = np.genfromtxt(sys.argv[7],delimiter=' ')
 	conv_test_y = np.genfromtxt(sys.argv[8],delimiter=' ')
 	resultsFolder = sys.argv[9]
-	results = {}
+	
+	dist_results = {}
+	conv_results = {}
 
-	''' alone '''
-	print "**************************** MLP *****************************"
-	print "**************************** MODEL ALONE *****************************"
-	print "\n******************** Distinct Partition alone: *********************"
+	''' Model alone without feature selection nor dimensionality reduction '''
+	print "********************************* MLP *********************************"
+	print "\n*************************** MODEL ALONE ****************************"
+	print "\n******************* Distinct Partition alone: ********************"
 	result = mlp(distinct_train_x, distinct_test_x, distinct_train_y, distinct_test_y, resultsFolder+'/distinct/')
-	results["distinct"] = result
+	dist_results["alone"] = result
 
-	print "\n****************** Conventional Partition alone: *******************"
+	print "\n***************** Conventional Partition alone: ******************"
 	result = mlp(conv_train_x, conv_test_x, conv_train_y, conv_test_y, resultsFolder+'/conventional/')
-	results["conventional"] = result
+	conv_results["alone"] = result
 
 	''' Feature Selection '''
 	print "\n********************* WITH FEATURE SELECTION **********************"
@@ -45,81 +51,57 @@ def main():
 	distinct_train_new = np.genfromtxt(sys.argv[10],delimiter=' ')
 	distinct_test_new = np.genfromtxt(sys.argv[11],delimiter=' ')
 	result = mlp(distinct_train_new, distinct_test_new, distinct_train_y, distinct_test_y, resultsFolder+'/feature_distinct/')
-	results["distinctF"] = result
+	dist_results["feature"] = result
 
 	print "\n********** Conventional Partition with Feature Selection: ***********"
 	conv_train_new = np.genfromtxt(sys.argv[12],delimiter=' ')
 	conv_test_new = np.genfromtxt(sys.argv[13],delimiter=' ')
 	result = mlp(conv_train_new, conv_test_new, conv_train_y, conv_test_y, resultsFolder+'/feature_conventional/')
-	results["conventionalF"] = result
+	conv_results["feature"] = result
 
-
-	''' Dimentionality Reduction '''
+	''' Dimensionality Reduction '''
 	print "\n******************* WITH DIMENSIONALITY REDUCTION ********************"
 	print "\n********** Distinct Partition with Dimensionality Reduction: *********"
 	distinct_train_new = np.genfromtxt(sys.argv[14],delimiter=' ')
 	distinct_test_new = np.genfromtxt(sys.argv[15],delimiter=' ')
 	result = mlp(distinct_train_new, distinct_test_new, distinct_train_y, distinct_test_y, resultsFolder+'/pca_distinct/')
-	results["distinctPCA"] = result
+	dist_results["PCA"] = result
 
 	print "\n********** Conventional Partition with Dimensionality Reduction: ***********"
 	conv_train_new = np.genfromtxt(sys.argv[16],delimiter=' ')
 	conv_test_new = np.genfromtxt(sys.argv[17],delimiter=' ')
 
 	result = mlp(conv_train_new, conv_test_new, conv_train_y, conv_test_y, resultsFolder+'/pca_conventional/')
-	results["conventionalPCA"] = result
+	conv_results["PCA"] = result
 
-	''' plot the results '''
-	for i in results:
-		count = 2
-		for j in results[i]:
-			if i == 'distinct':
-				plt.scatter(count, j, c = 'r', marker='*', alpha=1, s=110, label='Distinct')
-			if i == 'conventional':
-				plt.scatter(count, j, c = 'navy', marker='^', alpha=0.5, s=70, label='Conventional')
-			if i == 'distinctF':
-				plt.scatter(count, j, c = 'y', marker='p', alpha=0.5, s=70, label="Feature Select -- Distinct")
-			if i == 'conventionalF':
-				plt.scatter(count, j, c = 'purple', marker='o', alpha=0.5, s=70, label="Feature Select -- Conventional")
-			if i == 'distinctPCA':
-				plt.scatter(count, j, c = 'pink', marker='>', alpha=0.7, s=70, label='PCA -- Distinct')
-			if i == 'conventionalPCA':
-				plt.scatter(count, j, c = 'orange', marker='s', alpha=0.7, s=70, label="PCA -- Conventional")
-			count += 1
-
-	handles, labels = plt.gca().get_legend_handles_labels()
-	by_label = OrderedDict(zip(labels, handles))
-	plt.legend(by_label.values(), by_label.keys())
-
-	xticks = [' ', 'RELU', 'logistic', ' ']
-	plt.xticks([1,2,3,4],xticks)
-	plt.title("MLP Classification Accuracy")
-	plt.ylabel("Accuracy")
-	plt.xlabel("Method")
-	plt.show()
+	''' Plot the model accuracies ''' 
+	plot(dist_results, "Distinct")
+	plot(conv_results, "Conventional")
 
 
 def mlp(train_x, test_x, train_y, test_y, resultsFolder):
 	''' Generate a MLP for each model '''
+
+	''' RELU kernel '''
 	relu_clf = pickle.load(open(resultsFolder+'relu.txt', 'rb'))
 
 	relu_accuracy = relu_clf.score(train_x, train_y)
 	relu_accuracy_test = relu_clf.score(test_x, test_y)
 	relu_cv = cross_val_score(relu_clf, train_x, train_y, cv=10).mean()
 	
-	# Gaussian (RBF) kernel SVM
+	''' Gaussian (RBF) kernel '''
 	log_clf = pickle.load(open(resultsFolder+'log.txt', 'rb'))
 
 	log_accuracy = log_clf.score(train_x, train_y)
 	log_accuracy_test = log_clf.score(test_x, test_y)
 	log_cv = cross_val_score(log_clf, train_x, train_y, cv=10).mean()
 
-
-	''' Accuracy without cross validation '''
+	''' Accuracy of the model on training data without cross validation '''
 	print "Accuracy without Cross Validation: "
 	print "relu activation accuracy: ", relu_accuracy
 	print "logistic activation accuracy: ", log_accuracy
 
+	''' Accuracy of the model on testing data without cross validation '''
 	print "\nAccuracy without Cross Validation for testing files: "
 	print "relu activation accuracy: ", relu_accuracy_test
 	print "logistic activation accuracy: ", log_accuracy_test
@@ -130,6 +112,34 @@ def mlp(train_x, test_x, train_y, test_y, resultsFolder):
 	print "logistic activation accuracy: ", log_cv
 
 	return relu_cv, log_cv
+
+
+def plot(results, partition):
+	''' Method to plot the accuracies of each model ''' 
+
+	# plot the accuracy of every model
+	for i in results:
+		count = 2
+		for j in results[i]:
+			if i == 'alone':
+				plt.scatter(count, j, c = 'darkorange', marker='o', alpha=0.7, s=110, label='Model Alone')
+			if i == 'feature':
+				plt.scatter(count, j, c = 'navy', marker='^', alpha=0.7, s=70, label='Feature Selection')
+			if i == 'PCA':
+				plt.scatter(count, j, c = 'pink', marker='p', alpha=1, s=110, label="Feature Extraction")
+			count += 1
+
+	# get the handles nad labels to eliminate duplicate labels in the legend
+	handles, labels = plt.gca().get_legend_handles_labels()
+	by_label = OrderedDict(zip(labels, handles))
+	plt.legend(by_label.values(), by_label.keys())
+
+	xticks = [' ', 'RELU', 'logistic', ' ']
+	plt.xticks([1,2,3,4],xticks)
+	plt.title("MLP Classification Accuracy with " + partition + " Partitioning")
+	plt.ylabel("Accuracy")
+	plt.xlabel("Method")
+	plt.show()
 
 
 if __name__ == '__main__':
