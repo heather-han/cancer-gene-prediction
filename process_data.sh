@@ -25,6 +25,6 @@ if [ -d $results ]; then
     touch $results/conventional/test_y.txt
 
     # Preprocess the data
-    python preprocess.py data/GSE2034_series_matrix.txt $results
-
+    python preprocess.py data/GSE2034_series_matrix.txt $results 
+    #data/GSE14020-GPL96_series_matrix data/GSE14020-GPL570_series_matrix
 fi

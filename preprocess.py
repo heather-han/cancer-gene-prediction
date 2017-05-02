@@ -40,7 +40,7 @@ def main():
 
 	''' Normalize the data '''
 	data_log = np.log(data)
-	data_scaled = preprocessing.scale(data_log)
+	data_scaled = preprocessing.scale(data_log, axis=1)
 	np.savetxt(results+'/data.txt', data_scaled)
 
 	# print normalized data
@@ -57,6 +57,14 @@ def main():
 	np.savetxt(results + '/conventional/test_x.txt', test_x)
 	np.savetxt(results + '/conventional/train_y.txt', train_y)
 	np.savetxt(results + '/conventional/test_y.txt', test_y)
+
+	''' process additional datasets '''
+	# data2 = np.genfromtxt(sys.argv[3],delimiter='\t',skip_header=70,skip_footer=1)[:,1:]
+	# data_log2 = np.log(data2)
+	# data_scaled2 = preprocessing.scale(data_log2)
+	# np.savetxt(results+'/data.txt', data_scaled)
+
+	# data3 = np.genfromtxt(sys.argv[4],delimiter='\t',skip_header=70,skip_footer=1)[:,1:]
 
 
 ''' Partitioning method 1 '''
