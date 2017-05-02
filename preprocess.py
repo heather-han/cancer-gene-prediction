@@ -39,7 +39,8 @@ def main():
 	# read results directory path
 
 	''' Normalize the data '''
-	data_log = np.log(data)
+	plus_one = [i+1 for i in data]
+	data_log = [np.log2(i) for i in plus_one]
 	data_scaled = preprocessing.scale(data_log, axis=1)
 	np.savetxt(results+'/data.txt', data_scaled)
 
