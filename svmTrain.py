@@ -29,7 +29,6 @@ def main():
 	conv_train_y = np.genfromtxt(sys.argv[7],delimiter=' ')
 	conv_test_y = np.genfromtxt(sys.argv[8],delimiter=' ')
 	results = sys.argv[9]
-	# pcaFile = np.genfromtxt(sys.argv[10],delimiter=' ')
 
 	SVM(distinct_train_x, distinct_train_y, "distinct", results)
 
@@ -43,17 +42,20 @@ def main():
 	SVM(conv_train_new, conv_train_y, "feature_conventional",results)
 
 	''' Dimentionality Reduction '''
-	# dimensionReduction(pcaFile)
+	distinct_train_new_pca = dimensionReduction(distinct_train_x, distinct_test_x, "pca_distinct",results)
+	SVM(distinct_train_new_pca, distinct_train_y, "pca_distinct",results)
+
+	conv_train_new_pca = dimensionReduction(conv_train_x, conv_test_x, "pca_conventional", results)
+	SVM(conv_train_new_pca, conv_train_y, "pca_conventional",results)
 
 def selectFeatures(train_x, test_x, train_y, test_y, name, results):
 	# set the random state to 1 so that the results are consistent
 	clf = ExtraTreesClassifier(random_state=1)
 	clf = clf.fit(train_x, train_y)
 	importance = clf.feature_importances_
-	selected = []
-	for i in range(0, len(importance)):
-		if importance[i] >= 1e-5:
-			selected.append(int(i))
+	a = np.array(importance)
+	selected = np.argpartition(a,-10)[-10:]
+	
 	np.savetxt(results+'/params/'+name+'/selectedFeatures.txt', selected)
 
 	model = SelectFromModel(clf, prefit = True)
@@ -62,14 +64,16 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results):
 	np.savetxt(results+'/params/'+name+'/testX.txt', test_new)
 	np.savetxt(results+'/params/'+name+'/trainX.txt', train_new)
 
-	print clf.feature_importances_
 	return train_new
 
-# def dimensionReduction(train_x, test_x):
-# 	pca = PCA(n_components=10)
-# 	model = pca.fit(train_x)
-# 	train_new = fit_transform(train_x)
-# 	test_new  =fit_transform(test_x)
+def dimensionReduction(train_x, test_x, name, results):
+	pca = PCA(n_components=80, random_state=1) #chose this because featureSelection->300
+	model = pca.fit(train_x)
+	train_new = model.transform(train_x)
+	test_new  = model.transform(test_x)
+	np.savetxt(results+'/params/'+name+'/testX.txt', test_new)
+	np.savetxt(results+'/params/'+name+'/trainX.txt', train_new)
+	return train_new
 
 def SVM(train_x, train_y, name, results):
 	''' Generate a SVM for each model '''

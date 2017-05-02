@@ -10,6 +10,8 @@ mkdir $results/params/distinct
 mkdir $results/params/conventional
 mkdir $results/params/feature_distinct
 mkdir $results/params/feature_conventional
+mkdir $results/params/pca_distinct
+mkdir $results/params/pca_conventional
 
 dist_trainX=$results/distinct/train_x.txt
 dist_trainY=$results/distinct/train_y.txt

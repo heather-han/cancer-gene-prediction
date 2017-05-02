@@ -23,24 +23,24 @@ def main():
 
 	# extract int values from metastasis
 	met_status = [int(i[-2:-1]) for i in metastasis]
-
 	# print metastasis information
 	#np.savetxt('metastasis.txt', met_status)
 
 	# read sample and feature data
 	data = np.genfromtxt(sys.argv[1],delimiter='\t',skip_header=55,skip_footer=1)[:,1:]
+
 	genes = np.genfromtxt(sys.argv[1],dtype=str,delimiter='\t',skip_header=55,skip_footer=1)[:,0]
 	
 	results = sys.argv[2]
-	
+
 	'''save the genes'''
 	np.savetxt(results+'/genes.txt', genes, fmt='%s')
 
 	# read results directory path
 
 	''' Normalize the data '''
-#	data_log = np.log(data)
-	data_scaled = preprocessing.scale(data)
+	data_log = np.log(data)
+	data_scaled = preprocessing.scale(data_log)
 	np.savetxt(results+'/data.txt', data_scaled)
 
 	# print normalized data

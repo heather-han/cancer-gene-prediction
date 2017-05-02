@@ -28,12 +28,14 @@ def main():
 	resultsFolder = sys.argv[9]
 	results = {}
 
-	print "********************* WITHOUT FEATURE SELECTION **********************"
-	print "\n********** Distinct Partition without Feature Selection: **********"
+	''' alone '''
+	print "**************************** MLP *****************************"
+	print "**************************** MODEL ALONE *****************************"
+	print "\n******************** Distinct Partition alone: *********************"
 	result = mlp(distinct_train_x, distinct_test_x, distinct_train_y, distinct_test_y, resultsFolder+'/distinct/')
 	results["distinct"] = result
 
-	print "\n********** Conventional Partition without Feature Selection: **********"
+	print "\n****************** Conventional Partition alone: *******************"
 	result = mlp(conv_train_x, conv_test_x, conv_train_y, conv_test_y, resultsFolder+'/conventional/')
 	results["conventional"] = result
 
@@ -51,6 +53,22 @@ def main():
 	result = mlp(conv_train_new, conv_test_new, conv_train_y, conv_test_y, resultsFolder+'/feature_conventional/')
 	results["conventionalF"] = result
 
+
+	''' Dimentionality Reduction '''
+	print "\n******************* WITH DIMENSIONALITY REDUCTION ********************"
+	print "\n********** Distinct Partition with Dimensionality Reduction: *********"
+	distinct_train_new = np.genfromtxt(sys.argv[14],delimiter=' ')
+	distinct_test_new = np.genfromtxt(sys.argv[15],delimiter=' ')
+	result = mlp(distinct_train_new, distinct_test_new, distinct_train_y, distinct_test_y, resultsFolder+'/pca_distinct/')
+	results["distinctPCA"] = result
+
+	print "\n********** Conventional Partition with Dimensionality Reduction: ***********"
+	conv_train_new = np.genfromtxt(sys.argv[16],delimiter=' ')
+	conv_test_new = np.genfromtxt(sys.argv[17],delimiter=' ')
+
+	result = mlp(conv_train_new, conv_test_new, conv_train_y, conv_test_y, resultsFolder+'/pca_conventional/')
+	results["conventionalPCA"] = result
+
 	''' plot the results '''
 	for i in results:
 		count = 2
@@ -63,6 +81,10 @@ def main():
 				plt.scatter(count, j, c = 'y', marker='p', alpha=0.5, s=70, label="Feature Select -- Distinct")
 			if i == 'conventionalF':
 				plt.scatter(count, j, c = 'purple', marker='o', alpha=0.5, s=70, label="Feature Select -- Conventional")
+			if i == 'distinctPCA':
+				plt.scatter(count, j, c = 'pink', marker='>', alpha=0.7, s=70, label='PCA -- Distinct')
+			if i == 'conventionalPCA':
+				plt.scatter(count, j, c = 'orange', marker='s', alpha=0.7, s=70, label="PCA -- Conventional")
 			count += 1
 
 	handles, labels = plt.gca().get_legend_handles_labels()
@@ -102,7 +124,7 @@ def mlp(train_x, test_x, train_y, test_y, resultsFolder):
 	print "relu activation accuracy: ", relu_accuracy_test
 	print "logistic activation accuracy: ", log_accuracy_test
 	
-	''' Accuracy with 5-fold cross validation '''
+	''' Accuracy with 10-fold cross validation '''
 	print "\nAccuracy with 10-fold Cross Validation: "
 	print "relu activation accuracy: ", relu_cv
 	print "logistic activation accuracy: ", log_cv

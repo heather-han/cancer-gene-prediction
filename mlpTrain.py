@@ -14,6 +14,7 @@ from sklearn.model_selection import cross_val_predict
 import matplotlib.pyplot as plt
 from collections import OrderedDict
 import pickle
+from sklearn.decomposition import PCA
 
 def main():
 	''' Read data file '''
@@ -32,15 +33,21 @@ def main():
 
 	mlp(conv_train_x, conv_train_y, 'conventional', results)
 
+	''' Feature Selection '''
 	distinct_train_new = selectFeatures(distinct_train_x,distinct_test_x,distinct_train_y,distinct_test_y, "feature_distinct",results)
 	mlp(distinct_train_new, distinct_train_y, "feature_distinct",results)
 
-	
 	conv_train_new = selectFeatures(conv_train_x,conv_test_x,conv_train_y,conv_test_y, "feature_conventional", results)
 	mlp(conv_train_new, conv_train_y, "feature_conventional", results)
 
+	''' Dimentionality Reduction '''
+	distinct_train_new_pca = dimensionReduction(distinct_train_x, distinct_test_x, "pca_distinct",results)
+	mlp(distinct_train_new_pca, distinct_train_y, "pca_distinct",results)
 
-def selectFeatures(train_x, test_x, train_y, test_y, name, results):
+	conv_train_new_pca = dimensionReduction(conv_train_x, conv_test_x, "pca_conventional", results)
+	mlp(conv_train_new_pca, conv_train_y, "pca_conventional",results)
+
+def selectFeatures(train_x, test_x, train_y, test_y, name, results):  #maybe there is no need to do this? since svmTraind did it
 	# set the random state to 1 so that the results are consistent
 	clf = ExtraTreesClassifier(random_state=1)
 	clf = clf.fit(train_x, train_y)
@@ -50,6 +57,16 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results):
 	np.savetxt(results+'/params/'+name+'/MLPtestX.txt', test_new)
 	np.savetxt(results+'/params/'+name+'/MLPtrainX.txt', train_new)
 	return train_new
+
+def dimensionReduction(train_x, test_x, name, results):
+	pca = PCA(n_components=300) #chose this because featureSelection->300
+	model = pca.fit(train_x)
+	train_new = model.transform(train_x)
+	test_new  = model.transform(test_x)
+	np.savetxt(results+'/params/'+name+'/MLPtestX.txt', test_new)
+	np.savetxt(results+'/params/'+name+'/MLPtrainX.txt', train_new)
+	return train_new
+
 
 def mlp(train_x, train_y, name, results):
 	''' Generate a MLP for each model '''
