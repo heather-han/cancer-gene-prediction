@@ -23,15 +23,19 @@ def main():
 
 	# extract int values from metastasis
 	met_status = [int(i[-2:-1]) for i in metastasis]
-	# print metastasis information
-	#np.savetxt('metastasis.txt', met_status)
 
 	# read sample and feature data
 	data = np.genfromtxt(sys.argv[1],delimiter='\t',skip_header=55,skip_footer=1)[:,1:]
 
 	genes = np.genfromtxt(sys.argv[1],dtype=str,delimiter='\t',skip_header=55,skip_footer=1)[:,0]
-	
+		
+	''' remove 5 genes from data and genes in order to be consistent with
+		the additional datasets '''
+
+	genes = np.delete(genes, [22269, 22270, 22271, 22272, 22273, 22274], 0)
+	data = np.delete(data, [22269, 22270, 22271, 22272, 22273, 22274], 0)
 	results = sys.argv[2]
+
 
 	'''save the genes'''
 	np.savetxt(results+'/genes.txt', genes, fmt='%s')
@@ -44,9 +48,6 @@ def main():
 	data_scaled = preprocessing.scale(data_log, axis=1)
 	np.savetxt(results+'/data.txt', data_scaled)
 
-	# print normalized data
-	# print data_scaled
-	#np.savetxt('preprocessed_data.txt', data_scaled)
 	train_x, test_x, train_y, test_y = distinctPartion(data_scaled, met_status)
 	np.savetxt(results+'/distinct/train_x.txt', train_x)
 	np.savetxt(results + '/distinct/test_x.txt', test_x)
@@ -61,6 +62,11 @@ def main():
 
 	''' process additional datasets '''
 	data2 = np.genfromtxt(sys.argv[3],delimiter='\t',skip_header=70,skip_footer=1)[:,1:]
+	''' remove 5 genes from data2 in order to be consistent with
+		the additional datasets '''
+
+	data2 = np.delete(data2, [22269, 22270, 22271, 22272, 22273, 22274], 0)
+
 	plus_one2 = [i+1 for i in data2]
 	data_log2 = [np.log2(i) for i in plus_one2]
 	data_scaled2 = preprocessing.scale(data_log2, axis=1)
@@ -76,21 +82,50 @@ def main():
 	np.savetxt(results+'/GPL96_Y.txt', met_status2)
 
 	''' do data3 if we have more time, need to select the specific rows '''
-	# data3 = np.genfromtxt(sys.argv[4],delimiter='\t',skip_header=70,skip_footer=1)[:,1:]
-	# plus_one3 = [i+1 for i in data3]
-	# data_log3 = [np.log2(i) for i in plus_one3]
-	# data_scaled3 = preprocessing.scale(data_log3, axis=1)
-	# print ("data3 shape:",data_scaled3.T.shape)
-	# np.savetxt(results+'/GPL570_X.txt', data_scaled3.T)
+	#data3: features x samples
+	data3 = np.genfromtxt(sys.argv[4],delimiter='\t',skip_header=70,skip_footer=1)[:,1:]
+	(_, samples3) = data3.shape
+	data3Genes = np.genfromtxt(sys.argv[4],dtype=str,delimiter='\t',skip_header=70,skip_footer=1)[:,0]
+	# data3Row = data3.shape[0] #num_features
+	(row_, col_) = data_scaled2.shape #features x samples #  (22277, 36)
+	data3New = np.zeros((row_, samples3))
+	
+	geneList = genes.tolist()
+	test = []
+	j = 0
+	for i in data3Genes:
+		if i in geneList:
+			test.append(i)
+			idx = geneList.index(i)
+			data3New[j,:] = data3[idx,:]
+			j += 1
 
-	# metastasis3 = np.genfromtxt(sys.argv[4],dtype=str,delimiter='\t',skip_header=36,max_rows=1)[1:]
-	# met_status3 = []
-	# for i in metastasis3:
-	# 	if 'Bone' in i:
-	# 		met_status3.append(1)
-	# 	else:
-	# 		met_status3.append(0)
-	# np.savetxt(results+'/GPL570_Y.txt', met_status3)
+	np.savetxt(results+'/test.txt', test, fmt='%s')
+
+
+	plus_one3 = [i+1 for i in data3New]
+	data_log3 = [np.log2(i) for i in plus_one3]
+	data_scaled3 = preprocessing.scale(data_log3, axis=1)
+	np.savetxt(results+'/GPL570_X.txt', data_scaled3.T)
+
+	metastasis3 = np.genfromtxt(sys.argv[4],dtype=str,delimiter='\t',skip_header=36,max_rows=1)[1:]
+	met_status3 = []
+	for i in metastasis3:
+		if 'Bone' in i:
+			met_status3.append(1)
+		else:
+			met_status3.append(0)
+	np.savetxt(results+'/GPL570_Y.txt', met_status3)
+
+	''' merge two datasets together '''
+	data2Final = data_scaled2.T
+	data3Final = data_scaled3.T
+	# dataXFinal = data2Final.append(data3Final)
+	dataXFinal = np.concatenate((data2Final, data3Final))
+	np.savetxt(results+'/testXFinal.txt', dataXFinal)
+	dataYFinal = np.concatenate((met_status2, met_status3))
+	np.savetxt(results+'/testYFinal.txt', dataYFinal)
+
 
 ''' Partitioning method 1 '''
 def distinctPartion(X,Y):

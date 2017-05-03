@@ -36,7 +36,7 @@ genes=$results/genes.txt
 gene_index=$results/params/feature_conventional/selectedFeatures.txt
 
 # Additional test file
-addX=$results/GPL96_X.txt
+addX=$results/testXFinal.txt
 
 # SVM
 python svmTrain.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $results $addX

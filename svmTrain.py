@@ -66,7 +66,7 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results, test_x_add):
 	test_new_add = model.transform(test_x_add)
 	np.savetxt(results+'/params/'+name+'/testX.txt', test_new)
 	np.savetxt(results+'/params/'+name+'/trainX.txt', train_new)
-	np.savetxt(results+'/params/'+name+'/GPL96_X.txt', test_new_add)
+	np.savetxt(results+'/params/'+name+'/GPL96_570X.txt', test_new_add)
 
 	return train_new
 

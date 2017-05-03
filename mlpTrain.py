@@ -60,7 +60,7 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results, test_x_add):
 
 	np.savetxt(results+'/params/'+name+'/MLPtestX.txt', test_new)
 	np.savetxt(results+'/params/'+name+'/MLPtrainX.txt', train_new)
-	np.savetxt(results+'/params/'+name+'/MLPGPL96_X.txt', test_new_add)
+	np.savetxt(results+'/params/'+name+'/MLPGPL96_570X.txt', test_new_add)
 
 	return train_new
 
