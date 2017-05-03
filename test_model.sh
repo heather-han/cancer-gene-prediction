@@ -1,11 +1,17 @@
 #!/bin/bash
-# This script will call the main machine learning procedures and output the
-# model parameters to a file
+
+# Authors:
+# Heather Han (hhan16), Jiayao Wu (jwu86)
+# 2 May 2017
+
+# This script calls the main machine learning procedures and outputs the 
+# accuracies of each model to stdout
 
 # Read in file directories
 data="$1"
 results="$2"
 
+# Preprocessed data files
 dist_trainX=$results/distinct/train_x.txt
 dist_trainY=$results/distinct/train_y.txt
 dist_testX=$results/distinct/test_x.txt
@@ -18,6 +24,7 @@ conv_testY=$results/conventional/test_y.txt
 
 output=$results/params
 
+# Models for testing
 distinct_trainNew=$results/params/feature_distinct/trainX.txt
 distinct_testNew=$results/params/feature_distinct/testX.txt
 conv_trainNew=$results/params/feature_conventional/trainX.txt
@@ -43,8 +50,8 @@ addX=$results/params/feature_conventional/GPL96_X.txt
 addY=$results/GPL96_Y.txt
 
 addXMLP=$results/params/feature_conventional/MLPGPL96_X.txt
-# SVM
 
+# SVM
 python svmTest.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $output $distinct_trainNew $distinct_testNew $conv_trainNew $conv_testNew $distinct_trainPCA $distinct_testPCA $conv_trainPCA $conv_testPCA $addX $addY
 
 # MLP
