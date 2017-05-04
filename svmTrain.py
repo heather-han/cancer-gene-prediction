@@ -89,27 +89,42 @@ def dimensionReduction(train_x, test_x, name, results, test_x_add):
 def SVM(train_x, train_y, name, results):
 	''' Generate a SVM for each model '''
 	# linear kernel SVM
+	f = open(results+'/all_model_params.txt', 'a')
+	f.write(name + ' for SVM: \n')
+
 	lin_svm = svm.SVC(kernel='linear').fit(train_x, train_y)
 	pickle.dump(lin_svm, open(results+'/params/'+name+'/linear.txt', 'wb'))
-	
+	params = lin_svm.get_params()
+	f.write( str( params ) )
+	f.write('\n')
+
 	# Gaussian (RBF) kernel SVM
 	gau_svm = svm.SVC(kernel='rbf').fit(train_x, train_y)
 	pickle.dump(gau_svm, open(results+'/params/'+name+'/gaussian.txt', 'wb'))
+	params = gau_svm.get_params()
+	f.write( str( params ) )
+	f.write('\n')
 
 	# Polynomial kernel SVM with d = 3
 	pol3_svm = svm.SVC(kernel='poly',degree=3).fit(train_x, train_y)
 	pickle.dump(pol3_svm, open(results+'/params/'+name+'/pol3.txt', 'wb'))
-
+	params = pol3_svm.get_params()
+	f.write( str( params ) )
+	f.write('\n')
 
 	# Polynomial kernel SVM with d = 4
 	pol4_svm = svm.SVC(kernel='poly',degree=4).fit(train_x, train_y)
 	pickle.dump(pol4_svm, open(results+'/params/'+name+'/pol4.txt', 'wb'))
-
+	params = pol4_svm.get_params()
+	f.write( str( params ) )
+	f.write('\n')
 
 	# Polynomial kernel SVM with d = 6
 	pol6_svm = svm.SVC(kernel='poly',degree=6).fit(train_x, train_y)
 	pickle.dump(pol6_svm, open(results+'/params/'+name+'/pol6.txt', 'wb'))
-
-
+	params = pol6_svm.get_params()
+	f.write( str( params ) )
+	f.write('\n\n')
+	f.close()
 if __name__ == '__main__':
 	main()

@@ -84,15 +84,23 @@ def dimensionReduction(train_x, test_x, name, results, test_x_add):
 
 
 def mlp(train_x, train_y, name, results):
+	f = open(results+'/all_model_params.txt', 'a')
+	f.write(name + ' for MLP: \n')
+
 	''' Generate a MLP for each model '''
 	#relu activation MLP
 	relu_clf = MLPClassifier(hidden_layer_sizes=(100),activation='relu',random_state=1,max_iter=10000).fit(train_x, train_y)
 	pickle.dump(relu_clf, open(results+'/params/'+name+'/relu.txt', 'wb'))
+	params = relu_clf.get_params()
+	f.write( str( params ) )
+	f.write('\n')
 
 	#logistic activation MLP
 	log_clf = MLPClassifier(hidden_layer_sizes=(100),activation='logistic',random_state=1,max_iter=10000).fit(train_x, train_y)
 	pickle.dump(log_clf, open(results+'/params/'+name+'/log.txt', 'wb'))
-
-
+	params = log_clf.get_params()
+	f.write( str( params ) )
+	f.write('\n\n')
+	f.close()
 if __name__ == '__main__':
 	main()
