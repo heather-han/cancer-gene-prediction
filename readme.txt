@@ -5,9 +5,10 @@ Jiayao Wu (jwu86)
 Run the program: ./script.sh
 
 Bash files:
-1. script.sh: it calls train_model.sh and test_model.sh
-2. train_model.sh
-3. test_model.sh
+1. script.sh: it calls process_data.sh, train_model.sh and test_model.sh
+2. process_data.sh
+3. train_model.sh
+4. test_model.sh
 
 Data files (they are in the 'data' folder):
 1. GSE2034_series_matrix.txt
