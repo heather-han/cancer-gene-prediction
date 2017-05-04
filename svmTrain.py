@@ -30,8 +30,10 @@ def main():
 	conv_test_y = np.genfromtxt(sys.argv[8],delimiter=' ')
 	results = sys.argv[9]
 
+	''' distinct partition '''
 	SVM(distinct_train_x, distinct_train_y, "distinct", results)
 
+	''' conventional partition ''' 
 	SVM(conv_train_x, conv_train_y, "conventional",results)
 
 	''' Feature Selection '''
@@ -56,6 +58,7 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results, test_x_add):
 	clf = clf.fit(train_x, train_y)
 	importance = clf.feature_importances_
 	a = np.array(importance)
+	# select the top 20 importance genes
 	selected = np.argpartition(a,-20)[-20:]
 	
 	np.savetxt(results+'/params/'+name+'/selectedFeatures.txt', selected)
@@ -71,7 +74,7 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results, test_x_add):
 	return train_new
 
 def dimensionReduction(train_x, test_x, name, results):
-	pca = PCA(n_components=80, random_state=1) #chose this because featureSelection->300
+	pca = PCA(n_components=80, random_state=1) 
 	model = pca.fit(train_x)
 	train_new = model.transform(train_x)
 	test_new  = model.transform(test_x)

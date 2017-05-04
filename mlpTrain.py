@@ -28,11 +28,13 @@ def main():
 	conv_test_y = np.genfromtxt(sys.argv[8],delimiter=' ')
 	results = sys.argv[9]
 
-	
+	''' distinct partiton '''
 	mlp(distinct_train_x, distinct_train_y, 'distinct', results)
 
+	''' conventional partition '''
 	mlp(conv_train_x, conv_train_y, 'conventional', results)
 
+	''' additional dataset '''
 	test_x_add = np.genfromtxt(sys.argv[10],delimiter=' ')
 
 	''' Feature Selection '''
@@ -54,8 +56,10 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results, test_x_add):
 	clf = ExtraTreesClassifier(random_state=1)
 	clf = clf.fit(train_x, train_y)
 	model = SelectFromModel(clf, prefit = True)
+	#transformed all of them here to be consistent
 	train_new = model.transform(train_x)
 	test_new = model.transform(test_x)
+	#additional dataset
 	test_new_add = model.transform(test_x_add)
 
 	np.savetxt(results+'/params/'+name+'/MLPtestX.txt', test_new)
@@ -65,8 +69,9 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results, test_x_add):
 	return train_new
 
 def dimensionReduction(train_x, test_x, name, results):
-	pca = PCA(n_components=300) #chose this because featureSelection->300
+	pca = PCA(n_components=80)
 	model = pca.fit(train_x)
+	#transformed both for consistency
 	train_new = model.transform(train_x)
 	test_new  = model.transform(test_x)
 	np.savetxt(results+'/params/'+name+'/MLPtestX.txt', test_new)
@@ -76,10 +81,11 @@ def dimensionReduction(train_x, test_x, name, results):
 
 def mlp(train_x, train_y, name, results):
 	''' Generate a MLP for each model '''
+	#relu activation MLP
 	relu_clf = MLPClassifier(hidden_layer_sizes=(100),activation='relu',random_state=1,max_iter=10000).fit(train_x, train_y)
 	pickle.dump(relu_clf, open(results+'/params/'+name+'/relu.txt', 'wb'))
 
-	# Gaussian (RBF) kernel SVM
+	#logistic activation MLP
 	log_clf = MLPClassifier(hidden_layer_sizes=(100),activation='logistic',random_state=1,max_iter=10000).fit(train_x, train_y)
 	pickle.dump(log_clf, open(results+'/params/'+name+'/log.txt', 'wb'))
 

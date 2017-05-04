@@ -18,7 +18,7 @@ def main():
 
 	''' Read relevant data from file '''
 
-	# read information about the metastasis status
+	# read information about the metastasis status from GSE2034_series_matrix
 	metastasis = np.genfromtxt(sys.argv[1],dtype=str,delimiter='\t',skip_header=35,max_rows=1)[1:]
 
 	# extract int values from metastasis
@@ -34,13 +34,12 @@ def main():
 
 	genes = np.delete(genes, [22269, 22270, 22271, 22272, 22273, 22274], 0)
 	data = np.delete(data, [22269, 22270, 22271, 22272, 22273, 22274], 0)
+	
+	# read results directory path
 	results = sys.argv[2]
-
 
 	'''save the genes'''
 	np.savetxt(results+'/genes.txt', genes, fmt='%s')
-
-	# read results directory path
 
 	''' Normalize the data '''
 	plus_one = [i+1 for i in data]
@@ -48,12 +47,14 @@ def main():
 	data_scaled = preprocessing.scale(data_log, axis=1)
 	np.savetxt(results+'/data.txt', data_scaled)
 
+	''' perform distinct partition '''
 	train_x, test_x, train_y, test_y = distinctPartion(data_scaled, met_status)
 	np.savetxt(results+'/distinct/train_x.txt', train_x)
 	np.savetxt(results + '/distinct/test_x.txt', test_x)
 	np.savetxt(results + '/distinct/train_y.txt', train_y)
 	np.savetxt(results + '/distinct/test_y.txt', test_y)
 
+	''' perform conventional partition '''
 	train_x, test_x, train_y, test_y = conventionalPartition(data_scaled, met_status)
 	np.savetxt(results + '/conventional/train_x.txt', train_x)
 	np.savetxt(results + '/conventional/test_x.txt', test_x)
@@ -61,52 +62,52 @@ def main():
 	np.savetxt(results + '/conventional/test_y.txt', test_y)
 
 	''' process additional datasets '''
+	''' process GSE14020-GPL96_series_matrix'''
 	data2 = np.genfromtxt(sys.argv[3],delimiter='\t',skip_header=70,skip_footer=1)[:,1:]
+	
 	''' remove 5 genes from data2 in order to be consistent with
 		the additional datasets '''
-
 	data2 = np.delete(data2, [22269, 22270, 22271, 22272, 22273, 22274], 0)
 
+	''' normalize the data2 ''' 
 	plus_one2 = [i+1 for i in data2]
 	data_log2 = [np.log2(i) for i in plus_one2]
 	data_scaled2 = preprocessing.scale(data_log2, axis=1)
-	np.savetxt(results+'/GPL96_X.txt', data_scaled2.T)
+	# np.savetxt(results+'/GPL96_X.txt', data_scaled2.T) not used
+
 
 	metastasis2 = np.genfromtxt(sys.argv[3],dtype=str,delimiter='\t',skip_header=36,max_rows=1)[1:]
 	met_status2 = []
 	for i in metastasis2:
+		#only select bone metastasis
 		if 'Bone' in i:
 			met_status2.append(1)
 		else:
 			met_status2.append(0)
-	np.savetxt(results+'/GPL96_Y.txt', met_status2)
+	# np.savetxt(results+'/GPL96_Y.txt', met_status2) not used
 
-	''' do data3 if we have more time, need to select the specific rows '''
-	#data3: features x samples
+	''' process GSE14020-GPL570_series_matrix '''
 	data3 = np.genfromtxt(sys.argv[4],delimiter='\t',skip_header=70,skip_footer=1)[:,1:]
 	(_, samples3) = data3.shape
 	data3Genes = np.genfromtxt(sys.argv[4],dtype=str,delimiter='\t',skip_header=70,skip_footer=1)[:,0]
-	# data3Row = data3.shape[0] #num_features
-	(row_, col_) = data_scaled2.shape #features x samples #  (22277, 36)
+	(row_, col_) = data_scaled2.shape
 	data3New = np.zeros((row_, samples3))
 	
+	''' since GSE14020-GPL570 has more features than needed, need to select
+	 	the ones that we need '''
 	geneList = genes.tolist()
-	test = []
 	j = 0
 	for i in data3Genes:
 		if i in geneList:
-			test.append(i)
 			idx = geneList.index(i)
 			data3New[j,:] = data3[idx,:]
 			j += 1
 
-	np.savetxt(results+'/test.txt', test, fmt='%s')
-
-
+	''' normalize data3 '''
 	plus_one3 = [i+1 for i in data3New]
 	data_log3 = [np.log2(i) for i in plus_one3]
 	data_scaled3 = preprocessing.scale(data_log3, axis=1)
-	np.savetxt(results+'/GPL570_X.txt', data_scaled3.T)
+	# np.savetxt(results+'/GPL570_X.txt', data_scaled3.T) not used
 
 	metastasis3 = np.genfromtxt(sys.argv[4],dtype=str,delimiter='\t',skip_header=36,max_rows=1)[1:]
 	met_status3 = []
@@ -115,12 +116,11 @@ def main():
 			met_status3.append(1)
 		else:
 			met_status3.append(0)
-	np.savetxt(results+'/GPL570_Y.txt', met_status3)
+	# np.savetxt(results+'/GPL570_Y.txt', met_status3) not used
 
-	''' merge two datasets together '''
+	''' merge GSE14020-GPL96 and GSE14020-GPL570 together '''
 	data2Final = data_scaled2.T
 	data3Final = data_scaled3.T
-	# dataXFinal = data2Final.append(data3Final)
 	dataXFinal = np.concatenate((data2Final, data3Final))
 	np.savetxt(results+'/testXFinal.txt', dataXFinal)
 	dataYFinal = np.concatenate((met_status2, met_status3))

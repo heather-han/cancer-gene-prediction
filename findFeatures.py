@@ -7,7 +7,10 @@ import sys
 import numpy as np
 ''' Script used to find which features are selected '''
 
+#a list of genes
 genes = np.genfromtxt(sys.argv[1],delimiter=' ', dtype=str)
+
+#a list of important genes' indexes
 gene_index = np.genfromtxt(sys.argv[2],delimiter=' ')
 results = sys.argv[3]
 
