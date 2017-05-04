@@ -46,10 +46,10 @@ def main():
 	SVM(conv_train_new, conv_train_y, "feature_conventional",results)
 
 	''' Dimentionality Reduction '''
-	distinct_train_new_pca = dimensionReduction(distinct_train_x, distinct_test_x, "pca_distinct",results)
+	distinct_train_new_pca = dimensionReduction(distinct_train_x, distinct_test_x, "pca_distinct",results, test_x_add)
 	SVM(distinct_train_new_pca, distinct_train_y, "pca_distinct",results)
 
-	conv_train_new_pca = dimensionReduction(conv_train_x, conv_test_x, "pca_conventional", results)
+	conv_train_new_pca = dimensionReduction(conv_train_x, conv_test_x, "pca_conventional", results, test_x_add)
 	SVM(conv_train_new_pca, conv_train_y, "pca_conventional",results)
 
 def selectFeatures(train_x, test_x, train_y, test_y, name, results, test_x_add):
@@ -73,13 +73,17 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results, test_x_add):
 
 	return train_new
 
-def dimensionReduction(train_x, test_x, name, results):
+def dimensionReduction(train_x, test_x, name, results, test_x_add):
 	pca = PCA(n_components=80, random_state=1) 
 	model = pca.fit(train_x)
 	train_new = model.transform(train_x)
 	test_new  = model.transform(test_x)
+	test_new_add = model.transform(test_x_add)
+
 	np.savetxt(results+'/params/'+name+'/testX.txt', test_new)
 	np.savetxt(results+'/params/'+name+'/trainX.txt', train_new)
+	np.savetxt(results+'/params/'+name+'/GPL96_570X.txt', test_new_add)
+
 	return train_new
 
 def SVM(train_x, train_y, name, results):

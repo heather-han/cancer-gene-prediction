@@ -85,6 +85,7 @@ def main():
 	conv_results["add_feature"] = result
 
 	print "\n******************* PCA + conventional partition *******************"
+	testNew_X = np.genfromtxt(sys.argv[20],delimiter=' ')
 	result = SVM2(testNew_X, testNew_Y, resultsFolder+'/pca_conventional/' )
 	conv_results["add_pca"] = result
 

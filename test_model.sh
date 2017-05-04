@@ -51,9 +51,13 @@ addY=$results/testYFinal.txt
 
 addXMLP=$results/params/feature_conventional/MLPGPL96_570X.txt
 
+#pca for additional datasets:
+addX_PCA=$results/params/pca_conventional/GPL96_570X.txt
+addXMLP_PCA=$results/params/pca_conventional/MLPGPL96_570X.txt
+
 # SVM
-python svmTest.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $output $distinct_trainNew $distinct_testNew $conv_trainNew $conv_testNew $distinct_trainPCA $distinct_testPCA $conv_trainPCA $conv_testPCA $addX $addY
+python svmTest.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $output $distinct_trainNew $distinct_testNew $conv_trainNew $conv_testNew $distinct_trainPCA $distinct_testPCA $conv_trainPCA $conv_testPCA $addX $addY $addX_PCA
 
 # MLP
-python mlpTest.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $output $distinct_trainNewMLP $distinct_testNewMLP $conv_trainNewMLP $conv_testNewMLP $distinct_trainMLPPCA $distinct_testMLPPCA $conv_trainMLPPCA $conv_testMLPPCA $addXMLP $addY
+python mlpTest.py $dist_trainX $dist_testX $dist_trainY $dist_testY $conv_trainX $conv_testX $conv_trainY $conv_testY $output $distinct_trainNewMLP $distinct_testNewMLP $conv_trainNewMLP $conv_testNewMLP $distinct_trainMLPPCA $distinct_testMLPPCA $conv_trainMLPPCA $conv_testMLPPCA $addXMLP $addY $addXMLP_PCA
 
