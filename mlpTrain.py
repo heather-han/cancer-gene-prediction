@@ -69,7 +69,7 @@ def selectFeatures(train_x, test_x, train_y, test_y, name, results, test_x_add):
 	return train_new
 
 def dimensionReduction(train_x, test_x, name, results, test_x_add):
-	pca = PCA(n_components=80)
+	pca = PCA(n_components=80, random_state=1)
 	model = pca.fit(train_x)
 	#transformed both for consistency
 	train_new = model.transform(train_x)
