@@ -75,16 +75,16 @@ def main():
 	result = SVM(conv_train_new, conv_test_new, conv_train_y, conv_test_y, resultsFolder+'/pca_conventional/')
 	conv_results["PCA"] = result
 
-	''' Plot the model accuracies '''
-	plot(dist_results, "Distinct")
-	plot(conv_results, "Conventional")
-
 	''' for additional dataset '''
 	print "\n*************************** Additional Dataset **************************"
 	testNew_X = np.genfromtxt(sys.argv[18],delimiter=' ')
 	testNew_Y = np.genfromtxt(sys.argv[19],delimiter=' ')
 	result = SVM2(testNew_X, testNew_Y, resultsFolder+'/feature_conventional/' )
+	conv_results["additional"] = result
 
+	''' Plot the model accuracies '''
+	plot(dist_results, "Distinct")
+	plot(conv_results, "Conventional")
 
 
 def SVM(train_x, test_x, train_y, test_y, resultsFolder):
@@ -194,6 +194,8 @@ def plot(results, partition):
 				plt.scatter(count, j, c = 'navy', marker='^', alpha=0.7, s=70, label='Feature Selection')
 			if i == 'PCA':
 				plt.scatter(count, j, c = 'pink', marker='p', alpha=1, s=110, label="Feature Extraction")
+			if i == 'additional':
+				plt.scatter(count, j, c = 'purple', marker = '*', alpha=0.7, s=120, label='Additional Dataset')
 			count += 1
 
 	# get the handles nad labels to eliminate duplicate labels in the legend
