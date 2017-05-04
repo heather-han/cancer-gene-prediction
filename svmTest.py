@@ -35,7 +35,7 @@ def main():
 	conv_results = {}
 
 	''' Model alone without feature selection nor dimensionality reduction '''
-	print "**************************** SVM *****************************"
+	print "******************************* SVM **********************************"
 	print "**************************** MODEL ALONE *****************************"
 	print "\n******************** Distinct Partition alone: *********************"
 	result = SVM(distinct_train_x, distinct_test_x, distinct_train_y, distinct_test_y, resultsFolder+'/distinct/')
@@ -46,14 +46,14 @@ def main():
 	conv_results["alone"] = result
 
 	''' Feature Selection '''
-	print "\n********************* WITH FEATURE SELECTION **********************"
-	print "\n*********** Distinct Partition with Feature Selection: **********"
+	print "\n********************* WITH FEATURE SELECTION ***********************"
+	print "\n************ Distinct Partition with Feature Selection: ************"
 	distinct_train_new = np.genfromtxt(sys.argv[10],delimiter=' ')
 	distinct_test_new = np.genfromtxt(sys.argv[11],delimiter=' ')
 	result = SVM(distinct_train_new, distinct_test_new, distinct_train_y, distinct_test_y, resultsFolder+'/feature_distinct/')
 	dist_results["feature"] = result
 
-	print "\n********** Conventional Partition with Feature Selection: ***********"
+	print "\n********** Conventional Partition with Feature Selection: **********"
 	conv_train_new = np.genfromtxt(sys.argv[12],delimiter=' ')
 	conv_test_new = np.genfromtxt(sys.argv[13],delimiter=' ')
 
@@ -61,14 +61,14 @@ def main():
 	conv_results["feature"] = result
 
 	''' Dimensionality Reduction '''
-	print "\n******************* WITH DIMENSIONALITY REDUCTION ********************"
-	print "\n********** Distinct Partition with Dimensionality Reduction: *********"
+	print "\n****************** WITH DIMENSIONALITY REDUCTION *******************"
+	print "\n********* Distinct Partition with Dimensionality Reduction: ********"
 	distinct_train_new = np.genfromtxt(sys.argv[14],delimiter=' ')
 	distinct_test_new = np.genfromtxt(sys.argv[15],delimiter=' ')
 	result = SVM(distinct_train_new, distinct_test_new, distinct_train_y, distinct_test_y, resultsFolder+'/pca_distinct/')
 	dist_results["PCA"] = result
 
-	print "\n********** Conventional Partition with Dimensionality Reduction: ***********"
+	print "\n******* Conventional Partition with Dimensionality Reduction: ******"
 	conv_train_new = np.genfromtxt(sys.argv[16],delimiter=' ')
 	conv_test_new = np.genfromtxt(sys.argv[17],delimiter=' ')
 
@@ -76,11 +76,17 @@ def main():
 	conv_results["PCA"] = result
 
 	''' for additional dataset '''
-	print "\n*************************** Additional Dataset **************************"
+	print "\n*********************** Additional Dataset *************************"
+	print "\n*********** Feature Selection + conventional partition *************"
+
 	testNew_X = np.genfromtxt(sys.argv[18],delimiter=' ')
 	testNew_Y = np.genfromtxt(sys.argv[19],delimiter=' ')
 	result = SVM2(testNew_X, testNew_Y, resultsFolder+'/feature_conventional/' )
-	conv_results["additional"] = result
+	conv_results["add_feature"] = result
+
+	print "\n******************* PCA + conventional partition *******************"
+	result = SVM2(testNew_X, testNew_Y, resultsFolder+'/pca_conventional/' )
+	conv_results["add_pca"] = result
 
 	''' Plot the model accuracies '''
 	plot(dist_results, "Distinct")
@@ -194,8 +200,10 @@ def plot(results, partition):
 				plt.scatter(count, j, c = 'navy', marker='^', alpha=0.7, s=70, label='Feature Selection')
 			if i == 'PCA':
 				plt.scatter(count, j, c = 'pink', marker='p', alpha=1, s=110, label="Feature Extraction")
-			if i == 'additional':
-				plt.scatter(count, j, c = 'purple', marker = '*', alpha=0.7, s=120, label='Additional Dataset')
+			if i == 'add_feature':
+				plt.scatter(count, j, c = 'purple', marker='*', alpha=0.7, s=120, label='Secondary Feature Selection')
+			if i == 'add_pca':
+				plt.scatter(count, j, c = 'red', marker='s', alpha=0.7, s=110, label='Secondary Feature Extraction')
 			count += 1
 
 	# get the handles nad labels to eliminate duplicate labels in the legend
